@@ -1,0 +1,1864 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jadeworks</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #2d5016 0%, #3a5f1b 50%, #4a7023 100%);
+            color: #f4f1e8;
+            min-height: 100vh;
+            overflow-x: hidden;
+            scroll-behavior: smooth;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* Background Image Overlay */
+        .background-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('pagebg.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.7;
+            z-index: -1;
+        }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+            background: radial-gradient(ellipse at center, rgba(255,255,255,0.05) 0%, transparent 70%);
+            opacity: 1;
+            transition: opacity 0.5s ease-out;
+        }
+
+        .welcome-screen.fade-out {
+            opacity: 0;
+        }
+
+        .logo-area {
+            margin-bottom: 0rem;
+            animation: fadeInUp 1s ease-out;
+            width: 100%;
+        }
+
+        .logo-image {
+            width: 95%;
+            max-width: 800px;
+            height: 370px;
+            border: none;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1rem;
+            background: transparent;
+            background-image: url('jadeworkscarrdco.png');
+            background-size: cover;
+            background-position: center;
+            color: transparent;
+            font-size: 0;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #d4e6c7;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        .nav-buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 600px;
+            animation: fadeInUp 1s ease-out 0.3s both;
+            justify-items: center;
+        }
+
+        .nav-button {
+            background: transparent;
+            border: none;
+            color: #f4f1e8;
+            padding: 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+        }
+
+        /* Disabled button styles */
+        .nav-button.disabled {
+            cursor: not-allowed;
+            opacity: 0.4;
+            pointer-events: none;
+        }
+
+        .nav-button:not(.disabled):hover {
+            transform: translateY(-5px);
+        }
+
+        .nav-button-image {
+            width: 240px;
+            height: 240px;
+            border-radius: 15px;
+            background-size: cover;
+            background-position: center;
+            border: 2px solid #8db96e;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-button:not(.disabled):hover .nav-button-image {
+            border-color: #b8e994;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+        }
+
+        .nav-button-image::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .nav-button:not(.disabled):hover .nav-button-image::before {
+            left: 100%;
+        }
+
+        /* Disabled button overlay */
+        .nav-button.disabled .nav-button-image::after {
+            content: 'Coming Soon';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            color: #f4f1e8;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .vfx-image { 
+            background-image: url('VFXpreview.png'); 
+        }
+        .modelling-image { 
+            background-image: url('Modelspreview.png'); 
+        }
+        .animation-image { 
+            background-image: url('Obbypreview.png'); 
+        }
+        .terrain-image { 
+            background-image: url('Terrainpreview.png'); 
+        }
+
+        /* Cursor Tutorial Animation */
+        .cursor-tutorial {
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .cursor-tutorial img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .tutorial-text {
+            position: absolute;
+            left: 40px;
+            top: -10px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            white-space: nowrap;
+            opacity: 0;
+            transform: translateX(-10px);
+            transition: all 0.3s ease;
+            border: 2px solid #8db96e;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .tutorial-text::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0;
+            height: 0;
+            border-top: 6px solid transparent;
+            border-bottom: 6px solid transparent;
+            border-right: 8px solid #8db96e;
+        }
+
+        /* Click ripple effect */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(0);
+            animation: ripple-animation 0.4s linear;
+            pointer-events: none;
+        }
+
+        @keyframes ripple-animation {
+            to {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* Cursor click effect */
+        .cursor-click-effect {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(184, 233, 148, 0.8) 0%, rgba(184, 233, 148, 0.4) 50%, transparent 70%);
+            border: 2px solid rgba(184, 233, 148, 0.9);
+            pointer-events: none;
+            z-index: 1001;
+            opacity: 0;
+            transform: scale(0);
+            animation: cursor-click-animation 0.6s ease-out;
+        }
+
+        @keyframes cursor-click-animation {
+            0% {
+                opacity: 1;
+                transform: scale(0);
+            }
+            50% {
+                opacity: 0.8;
+                transform: scale(1.2);
+            }
+            100% {
+                opacity: 0;
+                transform: scale(2);
+            }
+        }
+
+        /* Audio Toggle Button */
+        .audio-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(141, 185, 110, 0.2);
+            border: 2px solid #8db96e;
+            color: #f4f1e8;
+            padding: 0.8rem;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.2rem;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .audio-toggle:hover {
+            background: rgba(141, 185, 110, 0.3);
+            transform: scale(1.1);
+        }
+
+        .audio-toggle.muted {
+            opacity: 0.5;
+            background: rgba(100, 100, 100, 0.2);
+            border-color: #666;
+        }
+
+        /* Social Media Buttons */
+        .social-media {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            z-index: 100;
+        }
+
+        .social-credit {
+            color: #d4e6c7;
+            font-size: 1rem;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        .social-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-button {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            background: #000000;
+            color: white;
+        }
+
+        .social-button img {
+            width: 50;
+            height: 50px;
+            object-fit: contain;
+        }
+
+        .social-button:hover {
+            transform: scale(1.2);
+        }
+
+        /* Portfolio Pages */
+        .portfolio-page {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+            opacity: 0;
+            transition: opacity 0.5s ease-out;
+            position: relative;
+        }
+
+        .portfolio-page.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .portfolio-page.fade-out {
+            opacity: 0;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-top: 2rem;
+        }
+
+        .back-button {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: rgba(141, 185, 110, 0.2);
+            border: 2px solid #8db96e;
+            color: #f4f1e8;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .back-button:hover {
+            background: rgba(141, 185, 110, 0.3);
+            transform: translateX(-5px);
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            color: #b8e994;
+            margin-bottom: 1rem;
+            font-weight: bold;
+            text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7);
+        }
+
+        .page-description {
+            font-size: 1.1rem;
+            color: #d4e6c7;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        .page-hero-image {
+            width: 100%;
+            max-width: 600px;
+            height: 200px;
+            margin: 0 auto 3rem;
+            border-radius: 15px;
+            background-image: url('https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80');
+            background-size: cover;
+            background-position: center;
+            border: 3px dashed #8db96e;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+        }
+
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .gallery-item {
+            background: rgba(141, 185, 110, 0.1);
+            border: 2px dashed #8db96e;
+            border-radius: 15px;
+            height: 300px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .gallery-item:hover {
+            transform: translateY(-5px);
+            border-style: solid;
+            background: rgba(141, 185, 110, 0.2);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .media-container {
+            width: 200px;
+            height: 200px;
+            border: 2px solid #8db96e;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            background: rgba(255,255,255,0.05);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .media-container img,
+        .media-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* VFX Section Styles */
+        .vfx-section {
+            margin-bottom: 4rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            border: 2px solid #8db96e;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            color: #b8e994;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        .section-subtitle {
+            font-size: 1rem;
+            color: #d4e6c7;
+            opacity: 0.9;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        .section-gallery {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1.5rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .section-gallery-item {
+            background: rgba(141, 185, 110, 0.1);
+            border: 2px dashed #8db96e;
+            border-radius: 15px;
+            width: 180px;
+            height: 180px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            flex-shrink: 0;
+        }
+
+        .section-gallery-item:hover {
+            transform: translateY(-5px);
+            border-style: solid;
+            background: rgba(141, 185, 110, 0.2);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+
+        .section-media-container {
+            width: 140px;
+            height: 140px;
+            border: 2px solid #8db96e;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 0.5rem;
+            background: rgba(255,255,255,0.05);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .section-media-container img,
+        .section-media-container video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .section-item-title {
+            font-size: 0.9rem;
+            color: #e3ffcf;
+            text-align: center;
+            padding: 0 0.5rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Commission Button */
+        .commission-button {
+            display: block;
+            width: 100%;
+            max-width: 400px;
+            margin: 3rem auto;
+            background: linear-gradient(145deg, #b8e994, #8db96e);
+            color: #2d5016;
+            border: none;
+            padding: 1.5rem 2rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .commission-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+            background: linear-gradient(145deg, #c9f0a8, #9dc279);
+        }
+
+        /* Commission Info Section */
+        .commission-info {
+            max-width: 800px;
+            margin: 2rem auto 0;
+            background: rgba(141, 185, 110, 0.1);
+            border: 2px solid #8db96e;
+            border-radius: 20px;
+            padding: 0;
+            overflow-y: auto;
+            overflow-x: hidden;
+            max-height: 0;
+            opacity: 0;
+            transition: all 0.6s ease;
+        }
+
+        .commission-info.active {
+            max-height: 500px;
+            opacity: 1;
+            padding: 2rem;
+        }
+
+        /* Custom scrollbar styling for commission info */
+        .commission-info::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .commission-info::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .commission-info::-webkit-scrollbar-thumb {
+            background: rgba(141, 185, 110, 0.6);
+            border-radius: 10px;
+        }
+
+        .commission-info::-webkit-scrollbar-thumb:hover {
+            background: rgba(141, 185, 110, 0.8);
+        }
+
+        .commission-section {
+            margin-bottom: 2rem;
+        }
+
+        .commission-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .commission-section-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            border-radius: 15px;
+            border: 2px solid #8db96e;
+        }
+
+        .commission-section-title {
+            font-size: 1.6rem;
+            color: #d4e6c7;
+            margin: 0;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        .commission-info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .commission-detail {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid rgba(141, 185, 110, 0.3);
+        }
+
+        .commission-detail h4 {
+            color: #b8e994;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        .commission-detail p {
+            color: #d4e6c7;
+            line-height: 1.4;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        .commission-price-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .commission-price-item {
+            background: rgba(141, 185, 110, 0.1);
+            border: 2px solid #8db96e;
+            border-radius: 15px;
+            padding: 1rem 1.5rem;
+            text-align: center;
+        }
+
+        .commission-price-item h4 {
+            color: #b8e994;
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);
+        }
+
+        .commission-price-item p {
+            color: #d4e6c7;
+            margin: 0;
+            font-weight: bold;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Modal for enlarged images */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.8);
+            max-width: 90%;
+            max-height: 90%;
+            text-align: center;
+            animation: modalZoom 0.3s ease forwards;
+        }
+
+        .modal-video {
+            width: 80vw;
+            max-width: 1460px;
+            height: 60vh;
+            border: 3px solid white;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            background: #000;
+        }
+
+        .modal-video video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            border-radius: 12px;
+        }
+
+        .modal-description {
+            color: white;
+            margin-top: 1rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .modal-credits {
+            color: #ccc;
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            font-style: italic;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+        }
+
+        .close {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #bbb;
+        }
+
+        @keyframes modalZoom {
+            to {
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+
+        /* Decorative Elements */
+        .leaf-decoration {
+            position: absolute;
+            opacity: 0.1;
+            pointer-events: none;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .leaf-1 {
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .leaf-2 {
+            top: 20%;
+            right: 15%;
+            animation-delay: 2s;
+        }
+
+        .leaf-3 {
+            bottom: 20%;
+            left: 20%;
+            animation-delay: 4s;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .logo-image { width: 95%; height: 250px; }
+            .nav-buttons { grid-template-columns: 1fr; max-width: 300px; }
+            .nav-button-image { width: 180px; height: 180px; }
+            .gallery { grid-template-columns: 1fr; }
+            .back-button { position: relative; margin-bottom: 2rem; }
+            .social-media { bottom: 1rem; right: 1rem; gap: 0.5rem; }
+            .social-button { width: 40px; height: 40px; font-size: 1.2rem; }
+            .audio-toggle { top: 1rem; right: 1rem; width: 40px; height: 40px; font-size: 1rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-overlay"></div>
+    
+    <div class="container">
+        <!-- Decorative leaves -->
+        <div class="leaf-decoration leaf-1">🍃</div>
+        <div class="leaf-decoration leaf-2">🌿</div>
+        <div class="leaf-decoration leaf-3">🍃</div>
+
+        <!-- Audio Toggle Button -->
+        <div class="audio-toggle" id="audioToggle" title="Toggle Sound Effects" onclick="toggleAudio()">
+            🔊
+        </div>
+
+        <!-- Cursor Tutorial -->
+        <div class="cursor-tutorial" id="cursorTutorial">
+            <img src="cursor/cursorr.png" alt="Cursor">
+            <div class="tutorial-text" id="tutorialText">Click on a creation to take a closer look!</div>
+        </div>
+
+        <!-- Social Media Buttons -->
+        <div class="social-media">
+            <div class="social-credit" id="socialCredit">@johnmasterxx</div>
+            <div class="social-buttons">
+                <div class="social-button discord" title="Discord" 
+                     onmouseenter="updateSocialCredit('@johnmasterxx / @jadeiya')"
+                     onmouseleave="updateSocialCredit('@johnmasterxx')">
+                     <img src="mediaIcons/discord.png" alt="Discord">
+                </div>
+                <div class="social-button youtube" title="YouTube"
+                     onmouseenter="updateSocialCredit('@johnmasterxx')"
+                     onmouseleave="updateSocialCredit('@johnmasterxx')">
+                     <img src="mediaIcons/youtube.png" alt="YouTube">
+                </div>
+                <div class="social-button roblox" title="Roblox"
+                     onmouseenter="updateSocialCredit('JohnTheTrxhard')"
+                     onmouseleave="updateSocialCredit('@johnmasterxx')">
+                     <img src="mediaIcons/roblox.png" alt="Roblox">
+                </div>
+            </div>
+        </div>
+
+        <!-- Welcome Screen -->
+        <div id="welcome" class="welcome-screen">
+            <div class="logo-area">
+                <div class="logo-image"></div>
+                <p class="subtitle">Click the buttons below to explore what I'm capable of!</p>
+            </div>
+            
+            <div class="nav-buttons">
+                <button class="nav-button" onclick="showPage('vfx')" data-page="vfx">
+                    <div class="nav-button-image vfx-image"></div>
+                </button>
+                <button class="nav-button disabled" data-page="modelling">
+                    <div class="nav-button-image modelling-image"></div>
+                </button>
+                <button class="nav-button disabled" data-page="animation">
+                    <div class="nav-button-image animation-image"></div>
+                </button>
+                <button class="nav-button disabled" data-page="terrain">
+                    <div class="nav-button-image terrain-image"></div>
+                </button>
+            </div>
+        </div>
+
+        <!-- VFX Portfolio Page -->
+        <div id="vfx" class="portfolio-page">
+            <button class="back-button" onclick="showWelcome()">← Back to Home</button>
+            <div class="page-header">
+                <h2 class="page-title">Visual Effects</h2>
+                <p class="page-description">My strength in studio asset creation, with a focus on extreme optimization whenever possible. Modelling included with request. In the case of a commission, "basic" modelling is free of charge! Please note my scripting knowledge is limited.</p>
+                <p class="page-description">Best Works: 💝 = Magnum Opus, 💖 = Most admired works</p>
+                <p class="page-description">Most Optimized Works: ⭐ = Lower particle count, 🌟 = Beautifully performant; under 2,000 particles per second [limit is 16,000].</p>
+            </div>
+
+            <!-- Style 1: Everyday -->
+            <div class="vfx-section">
+                <div class="section-header">
+                    <h3 class="section-title">-- Style 1: Everyday --</h3>
+                    <p class="section-subtitle">My primary and best quality VFX style, pretty flexible with modifications.</p>
+                </div>
+                <div class="section-gallery">
+                    <div class="section-gallery-item" onclick="openModal('FXstyle1VIDEOS/asminthiaaa.mp4', 'Asminthia 💝🌟 || December 2024', '@jadeiya | @t_azk: extra FX and ice shard meshes, @sheekydev: scripting')" data-target="asminthia">
+                        <div class="section-media-container">
+                            <img src="vfxstyle1/Asminthia.gif" alt="Everyday VFX 1">
+                        </div>
+                        <div class="section-item-title">Asminthia 💝🌟</div>
+                    </div>
+                    <div class="section-gallery-item" onclick="openModal('FXstyle1VIDEOS/ephemryst.mp4', 'Ephemryst 💖 || December 2023', '@jadeiya | @sheekydev & @teakzc: scripting')">
+                        <div class="section-media-container">
+                            <img src="vfxstyle1/Ephemryst.png" alt="Everyday VFX 2">
+                        </div>
+                        <div class="section-item-title">Ephemryst 💖</div>
+                    </div>
+                    <div class="section-gallery-item" onclick="openModal('FXstyle1VIDEOS/glitchr.mp4', 'GlitchR || Early 2024', '@jadeiya')">
+                        <div class="section-media-container">
+                            <img src="vfxstyle1/GlitchR.jpg" alt="Everyday VFX 3">
+                        </div>
+                        <div class="section-item-title">GlitchR</div>
+                    </div>
+                    <div class="section-gallery-item" onclick="openModal('FXstyle1VIDEOS/sacrinare.mp4', 'Sacrinare 🌟 || March 2025', '@jadeiya')">
+                        <div class="section-media-container">
+                            <img src="vfxstyle1/Sacrinare.jpg" alt="Everyday VFX 4">
+                        </div>
+                        <div class="section-item-title">Sacrinare 🌟</div>
+                    </div>
+                    <div class="section-gallery-item" onclick="openModal('FXstyle1VIDEOS/disastrous.mp4', 'Disastrous || Mid 2024', '@jadeiya')">
+                        <div class="section-media-container">
+                            <img src="vfxstyle1/Disastrous.jpg" alt="Everyday VFX 5">
+                        </div>
+                        <div class="section-item-title">Disastrous</div>
+                    </div>
+                    <div class="section-gallery-item" onclick="openModal('FXstyle1VIDEOS/desolate.mp4', 'Desolate ⭐ || March 2025', '@jadeiya')">
+                        <div class="section-media-container">
+                            <img src="vfxstyle1/Desolate.jpg" alt="Everyday VFX 6">
+                        </div>
+                        <div class="section-item-title">Desolate ⭐</div>
+                    </div>
+                     <div class="section-gallery-item" onclick="openModal('FXstyle1VIDEOS/quasar618.mp4', 'Quasar 618 💖⭐ || July 2025', '@jadeiya')">
+                        <div class="section-media-container">
+                            <img src="vfxstyle1/Q618.png" alt="Everyday VFX 7">
+                        </div>
+                        <div class="section-item-title">Quasar 618 💖⭐</div>
+                    </div>
+                    <div class="section-gallery-item" onclick="openModal('FXstyle1VIDEOS/reverie.mp4', 'Reverie || January 2024', '@jadeiya')">
+                        <div class="section-media-container">
+                            <img src="vfxstyle1/Reverie.jpg" alt="Everyday VFX 8">
+                        </div>
+                        <div class="section-item-title">Reverie</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Style 2: Abstraction -->
+            <div class="vfx-section">
+                <div class="section-header">
+                    <h3 class="section-title">-- Style 2: Abstraction --</h3>
+                    <p class="section-subtitle">A unique approach at VFX. This style is unique and self-taught/created by myself!</p>
+                </div>
+                <div class="section-gallery">
+                    <div class="section-gallery-item" onclick="openModal('FXstyle2VIDEOS/joyous.mp4', 'Joyous 🌟 || January 2024', '@jadeiya')">
+                        <div class="section-media-container">
+                            <img src="vfxstyle2/joyous.jpg" alt="Abstract VFX 1">
+                        </div>
+                        <div class="section-item-title">Joyous 🌟</div>
+                    </div>
+                    <div class="section-gallery-item" onclick="openModal('FXstyle2VIDEOS/glitzar.mp4', 'Glitzar || September 2024', '@jadeiya')">
+                        <div class="section-media-container">
+                            <img src="vfxstyle2/glitzar.jpg" alt="Abstract VFX 2">
+                        </div>
+                        <div class="section-item-title">Glitzar</div>
+                    </div>
+                    <div class="section-gallery-item" onclick="openModal('FXstyle2VIDEOS/niosha.mp4', 'Niosha 💝🌟 || May 2025', '@jadeiya')">
+                        <div class="section-media-container">
+                            <img src="vfxstyle2/niosha.jpg" alt="Abstract VFX 3">
+                        </div>
+                        <div class="section-item-title">Niosha 💝🌟</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Older Creations -->
+            <div class="vfx-section">
+                <div class="section-header">
+                    <h3 class="section-title">-- Older Creations --</h3>
+                    <p class="section-subtitle">Works that I think are dated to my current style but still deserve to be in this portfolio 💖</p>
+                </div>
+                <div class="section-gallery">
+                    <div class="section-gallery-item" onclick="openModal('FXstyle3VIDEOS/retina.mp4', 'Retina 💖🌟 || November 2023', '@jadeiya')">
+                        <div class="section-media-container">
+                            <img src="vfxstyle3/retina.jpg" alt="Older VFX 1">
+                        </div>
+                        <div class="section-item-title">Retina 💖🌟</div>
+                    </div>
+                    <div class="section-gallery-item" onclick="openModal('FXstyle3VIDEOS/NOOpa.mp4', 'NOOpa 💖 || September 2023', '@jadeiya')">
+                        <div class="section-media-container">
+                            <img src="vfxstyle3/noopa.jpg" alt="Older VFX 2">
+                        </div>
+                        <div class="section-item-title">NOOpa 💖</div>
+                    </div>
+                    <div class="section-gallery-item" onclick="openModal('FXstyle3VIDEOS/Vantivium.mp4', 'Vantivium 🌟 || March 2024', '@jadeiya')">
+                        <div class="section-media-container">
+                            <img src="vfxstyle3/vantivium.jpg" alt="Older VFX 3">
+                        </div>
+                        <div class="section-item-title">Vantivium 🌟</div>
+                    </div>
+                    <div class="section-gallery-item" onclick="openModal('FXstyle3VIDEOS/yvedolorite.mp4', 'Yvedolorite', '@jadeiya')">
+                        <div class="section-media-container">
+                            <img src="vfxstyle3/yvedolorite.jpg" alt="Older VFX 6">
+                        </div>
+                        <div class="section-item-title">Yvedolorite</div>
+                    </div>
+                    <div class="section-gallery-item" onclick="openModal('FXstyle1VIDEOS/TESTVIDEO.mp4', 'Nauticalis', '@jadeiya')">
+                        <div class="section-media-container">
+                            <img src="vfxstyle3/nauticalis.jpg" alt="Older VFX 7">
+                        </div>
+                        <div class="section-item-title">Nauticalis</div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="commission-button" onclick="toggleCommissionInfo('vfx')">
+                ❤︎ Commission Info ❤︎
+            </button>
+            <div id="vfx-commission-info" class="commission-info">
+                <div class="commission-section">
+                    <div class="commission-section-header">
+                        <h3 class="commission-section-title">Things you should know</h3>
+                    </div>
+                    <div class="commission-info-grid">
+                        <div class="commission-detail">
+                            <h4>Time</h4>
+                            <p>Expect projects to be completed within 1-10 days of requesting. I'm avaliable Mondays - Fridays [11 AM - 11 PM].</p>
+                        </div>
+                        <div class="commission-detail">
+                            <h4>Revisions</h4>
+                            <p>2 free revisions included, however you will be constantly sent progress updates to ensure you're getting what you want!</p>
+                        </div>
+                        <div class="commission-detail">
+                            <h4>Delivery</h4>
+                            <p>Project file [RBXM], Optional Video Showcase with/without watermark [MOV and MP4 formats avaliable].</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="commission-section">
+                    <div class="commission-section-header">
+                        <h3 class="commission-section-title">Prices</h3>
+                    </div>
+                    <div class="commission-price-grid">
+                        <div class="commission-price-item">
+                            <h4>Basic</h4>
+                            <p>$5-$20 USD or 1,500-6,000 robux | Simpler effects and particles. Usually these don't take more than a day to produce [E.g. Fireball, Lighting Strike, Beam, Slash, etc.].</p>
+                        </div>
+                        <div class="commission-price-item">
+                            <h4>Advanced</h4>
+                            <p>$20-$60 USD or 6,000-18,000 robux | These projects often take more time, though still have fast production time. Includes medium sized auras and typical polished creations. Can also be a combination of several "Basic" creations.</p>
+                        </div>
+                        <div class="commission-price-item">
+                            <h4>Complex</h4>
+                            <p>$60+ or 18,000+ robux | Projects in this category take minimum several days of production. Usually they're also much bigger and sophisticated in terms of effects. Includes FREE modelling!</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modelling Portfolio Page -->
+        <div id="modelling" class="portfolio-page">
+            <button class="back-button" onclick="showWelcome()">← Back to Home</button>
+            <div class="page-header">
+                <h2 class="page-title">3D Modelling</h2>
+                <p class="page-description">Detailed 3D models crafted with precision, from characters to environments and everything in between.</p>
+                <div class="page-hero-image">3D Modelling Hero Image Here</div>
+            </div>
+            <div class="gallery">
+                <div class="gallery-item" onclick="openModal('FXstyle1VIDEOS/TESTVIDEO.mp4', 'Character Design Portfolio', 'Original character design')">
+                    <div class="media-container">
+                        <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Model Project 1">
+                    </div>
+                    <div class="item-title">Character Design</div>
+                </div>
+                <div class="gallery-item" onclick="openModal('FXstyle1VIDEOS/TESTVIDEO.mp4', 'Hard Surface Modeling', 'Mechanical design project')">
+                    <div class="media-container">
+                        <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Model Project 2">
+                    </div>
+                    <div class="item-title">Hard Surface</div>
+                </div>
+                <div class="gallery-item" onclick="openModal('FXstyle1VIDEOS/TESTVIDEO.mp4', 'Organic Form Study', 'Nature-inspired sculpting')">
+                    <div class="media-container">
+                        <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Model Project 3">
+                    </div>
+                    <div class="item-title">Organic Forms</div>
+                </div>
+                <div class="gallery-item" onclick="openModal('FXstyle1VIDEOS/TESTVIDEO.mp4', 'Game Assets Collection', 'Various prop designs')">
+                    <div class="media-container">
+                        <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Model Project 4">
+                    </div>
+                    <div class="item-title">Props & Assets</div>
+                </div>
+            </div>
+            <button class="commission-button" onclick="toggleCommissionInfo('modelling')">
+                Want to commission me? Check out my prices! 🎨
+            </button>
+            <div id="modelling-commission-info" class="commission-info">
+                <div class="commission-section">
+                    <div class="commission-section-header">
+                        <h3 class="commission-section-title">Things you should know</h3>
+                    </div>
+                    <div class="commission-info-grid">
+                        <div class="commission-detail">
+                            <h4>Timeline</h4>
+                            <p>3-7 days per model</p>
+                        </div>
+                        <div class="commission-detail">
+                            <h4>Formats</h4>
+                            <p>OBJ, FBX, Blender files included</p>
+                        </div>
+                        <div class="commission-detail">
+                            <h4>Detail Level</h4>
+                            <p>Game-ready to high-poly sculpts</p>
+                        </div>
+                        <div class="commission-detail">
+                            <h4>Texturing</h4>
+                            <p>Basic materials and UV mapping</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="commission-section">
+                    <div class="commission-section-header">
+                        <h3 class="commission-section-title">Prices</h3>
+                    </div>
+                    <div class="commission-price-grid">
+                        <div class="commission-price-item">
+                            <h4>Simple Models</h4>
+                            <p>$25 - $50 | Basic props and objects</p>
+                        </div>
+                        <div class="commission-price-item">
+                            <h4>Character Models</h4>
+                            <p>$75 - $150 | Detailed character designs</p>
+                        </div>
+                        <div class="commission-price-item">
+                            <h4>Complex Models</h4>
+                            <p>$150+ | High-detail environments and vehicles</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Animation Portfolio Page -->
+        <div id="animation" class="portfolio-page">
+            <button class="back-button" onclick="showWelcome()">← Back to Home</button>
+            <div class="page-header">
+                <h2 class="page-title">Animation</h2>
+                <p class="page-description">Dynamic animations that breathe life into characters and objects with fluid, expressive movement.</p>
+                <div class="page-hero-image">Animation Hero Image Here</div>
+            </div>
+            <div class="gallery">
+                <div class="gallery-item" onclick="openModal('FXstyle1VIDEOS/TESTVIDEO.mp4', 'Character Animation Reel', 'Walk cycles and expressions')">
+                    <div class="media-container">
+                        <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Animation Project 1">
+                    </div>
+                    <div class="item-title">Character Animation</div>
+                </div>
+                <div class="gallery-item" onclick="openModal('FXstyle1VIDEOS/TESTVIDEO.mp4', 'Motion Graphics Suite', 'Logo animations and transitions')">
+                    <div class="media-container">
+                        <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Animation Project 2">
+                    </div>
+                    <div class="item-title">Motion Graphics</div>
+                </div>
+                <div class="gallery-item" onclick="openModal('FXstyle1VIDEOS/TESTVIDEO.mp4', 'Rigging & Setup Demo', 'Character rig breakdown')">
+                    <div class="media-container">
+                        <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Animation Project 3">
+                    </div>
+                    <div class="item-title">Rigging & Setup</div>
+                </div>
+                <div class="gallery-item" onclick="openModal('FXstyle1VIDEOS/TESTVIDEO.mp4', 'Procedural Animation', 'Automated movement systems')">
+                    <div class="media-container">
+                        <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Animation Project 4">
+                    </div>
+                    <div class="item-title">Procedural Animation</div>
+                </div>
+            </div>
+            <button class="commission-button" onclick="toggleCommissionInfo('animation')">
+                Want to commission me? Check out my prices! ✨
+            </button>
+            <div id="animation-commission-info" class="commission-info">
+                <div class="commission-section">
+                    <div class="commission-section-header">
+                        <h3 class="commission-section-title">Things you should know</h3>
+                    </div>
+                    <div class="commission-info-grid">
+                        <div class="commission-detail">
+                            <h4>Timeline</h4>
+                            <p>1-2 weeks for character rigs</p>
+                        </div>
+                        <div class="commission-detail">
+                            <h4>Animation Length</h4>
+                            <p>5-30 seconds depending on complexity</p>
+                        </div>
+                        <div class="commission-detail">
+                            <h4>Style</h4>
+                            <p>Realistic, cartoon, or stylized</p>
+                        </div>
+                        <div class="commission-detail">
+                            <h4>Rigging</h4>
+                            <p>Custom rigs for character animation</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="commission-section">
+                    <div class="commission-section-header">
+                        <h3 class="commission-section-title">Prices</h3>
+                    </div>
+                    <div class="commission-price-grid">
+                        <div class="commission-price-item">
+                            <h4>Basic Animation</h4>
+                            <p>$40 - $80 | Simple movement and transitions</p>
+                        </div>
+                        <div class="commission-price-item">
+                            <h4>Character Animation</h4>
+                            <p>$80 - $160 | Full character rigs and cycles</p>
+                        </div>
+                        <div class="commission-price-item">
+                            <h4>Complex Animation</h4>
+                            <p>$160+ | Advanced rigging and motion graphics</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Terrain Portfolio Page -->
+        <div id="terrain" class="portfolio-page">
+            <button class="back-button" onclick="showWelcome()">← Back to Home</button>
+            <div class="page-header">
+                <h2 class="page-title">Terrain & Environments</h2>
+                <p class="page-description">Immersive landscapes and environments that transport viewers to new worlds and natural settings.</p>
+                <div class="page-hero-image">Terrain Hero Image Here</div>
+            </div>
+            <div class="gallery">
+                <div class="gallery-item" onclick="openModal('FXstyle1VIDEOS/TESTVIDEO.mp4', 'Mountain Landscape Series', 'Photorealistic terrain generation')">
+                    <div class="media-container">
+                        <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Terrain Project 1">
+                    </div>
+                    <div class="item-title">Mountain Landscapes</div>
+                </div>
+                <div class="gallery-item" onclick="openModal('FXstyle1VIDEOS/TESTVIDEO.mp4', 'Forest Environment Study', 'Dense vegetation systems')">
+                    <div class="media-container">
+                        <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Terrain Project 2">
+                    </div>
+                    <div class="item-title">Forest Environments</div>
+                </div>
+                <div class="gallery-item" onclick="openModal('FXstyle1VIDEOS/TESTVIDEO.mp4', 'Procedural Terrain Tools', 'Custom generation algorithms')">
+                    <div class="media-container">
+                        <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Terrain Project 3">
+                    </div>
+                    <div class="item-title">Procedural Terrain</div>
+                </div>
+                <div class="gallery-item" onclick="openModal('FXstyle1VIDEOS/TESTVIDEO.mp4', 'Environmental Storytelling', 'Narrative through landscapes')">
+                    <div class="media-container">
+                        <img src="https://images.unsplash.com/photo-1568605114967-8130f3a36994?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" alt="Terrain Project 4">
+                    </div>
+                    <div class="item-title">Environmental Storytelling</div>
+                </div>
+            </div>
+            <button class="commission-button" onclick="toggleCommissionInfo('terrain')">
+                Want to commission me? Check out my prices! 🌍
+            </button>
+            <div id="terrain-commission-info" class="commission-info">
+                <div class="commission-section">
+                    <div class="commission-section-header">
+                        <h3 class="commission-section-title">Things you should know</h3>
+                    </div>
+                    <div class="commission-info-grid">
+                        <div class="commission-detail">
+                            <h4>Timeline</h4>
+                            <p>1-3 weeks for full environments</p>
+                        </div>
+                        <div class="commission-detail">
+                            <h4>Scale</h4>
+                            <p>Small scenes to vast landscapes</p>
+                        </div>
+                        <div class="commission-detail">
+                            <h4>Vegetation</h4>
+                            <p>Realistic plant and tree systems</p>
+                        </div>
+                        <div class="commission-detail">
+                            <h4>Optimization</h4>
+                            <p>Game-engine ready or cinematic</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="commission-section">
+                    <div class="commission-section-header">
+                        <h3 class="commission-section-title">Prices</h3>
+                    </div>
+                    <div class="commission-price-grid">
+                        <div class="commission-price-item">
+                            <h4>Small Terrain</h4>
+                            <p>$60 - $120 | Basic landscapes and scenes</p>
+                        </div>
+                        <div class="commission-price-item">
+                            <h4>Detailed Environment</h4>
+                            <p>$120 - $250 | Complex terrain with vegetation</p>
+                        </div>
+                        <div class="commission-price-item">
+                            <h4>Full Landscape</h4>
+                            <p>$250+ | Massive worlds and ecosystems</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal for enlarged images -->
+        <div id="imageModal" class="modal">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="modal-content">
+                <div class="modal-video" id="modalVideoContainer">
+                </div>
+                <div id="modalDescription" class="modal-description"></div>
+                <div id="modalCredits" class="modal-credits"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ==========================================
+        // EASY TOGGLE CONFIGURATION - EDIT HERE
+        // ==========================================
+        const BUTTON_SETTINGS = {
+            vfx: { enabled: true },
+            modelling: { enabled: false },
+            animation: { enabled: false },
+            terrain: { enabled: false }
+        };
+        // ==========================================
+
+        // Audio System
+        let audioEnabled = true;
+        let audioInitialized = false;
+        const clickSound = new Audio('sounds/click.mp3');
+        const hoverSound = new Audio('sounds/hover.mp3');
+        clickSound.volume = 0.7; 
+        hoverSound.volume = 0.4; 
+        clickSound.preload = 'auto';
+        hoverSound.preload = 'auto';
+
+        // Initialize audio on first user interaction
+        function initializeAudio() {
+            if (!audioInitialized) {
+                // Play and immediately pause both sounds to initialize them
+                clickSound.play().then(() => clickSound.pause()).catch(() => {});
+                hoverSound.play().then(() => hoverSound.pause()).catch(() => {});
+                audioInitialized = true;
+            }
+        }
+
+        function playClickSound() {
+            if (!audioEnabled) return;
+            initializeAudio(); // Ensure audio is initialized
+            try {
+                clickSound.currentTime = 0; // Reset to start
+                clickSound.play().catch(() => {}); // Handle any errors gracefully
+            } catch (e) {
+                // Silently handle any audio errors
+            }
+        }
+
+        function playHoverSound() {
+            if (!audioEnabled) return;
+            initializeAudio(); // Ensure audio is initialized
+            
+            // Create a new Audio instance for each hover to prevent cutting off
+            try {
+                const newHoverSound = new Audio('sounds/hover.mp3');
+                newHoverSound.volume = 1.0; // Full volume for hover sounds
+                newHoverSound.play().catch(() => {});
+            } catch (e) {
+                // Silently handle any audio errors
+            }
+        }
+
+        function toggleAudio() {
+            audioEnabled = !audioEnabled;
+            const audioToggle = document.getElementById('audioToggle');
+            
+            if (audioEnabled) {
+                audioToggle.textContent = '🔊';
+                audioToggle.classList.remove('muted');
+                audioToggle.title = 'Toggle Sound Effects (On)';
+                // Play a test sound to confirm it's working
+                playClickSound();
+            } else {
+                audioToggle.textContent = '🔇';
+                audioToggle.classList.add('muted');
+                audioToggle.title = 'Toggle Sound Effects (Off)';
+            }
+        }
+
+        let currentPage = 'welcome';
+        let tutorialShown = false;
+        let tutorialTimeouts = []; // Array to keep track of tutorial timeouts
+
+        function createRipple(event, button) {
+            const ripple = document.createElement('span');
+            const rect = button.getBoundingClientRect();
+            const size = Math.min(rect.width, rect.height) * 0.6; // Much smaller ripple
+            const x = event.clientX - rect.left - size / 2;
+            const y = event.clientY - rect.top - size / 2;
+            
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.classList.add('ripple');
+            
+            button.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 400);
+        }
+
+        function createCursorClickEffect(x, y) {
+            const clickEffect = document.createElement('div');
+            clickEffect.className = 'cursor-click-effect';
+            // Position relative to the document, accounting for scroll
+            clickEffect.style.left = (x - 12) + 'px';
+            clickEffect.style.top = (y - 12 + window.scrollY) + 'px';
+            
+            document.body.appendChild(clickEffect);
+            
+            setTimeout(() => {
+                clickEffect.remove();
+            }, 600);
+        }
+
+        function clearTutorialTimeouts() {
+            // Clear all tutorial timeouts
+            tutorialTimeouts.forEach(timeout => clearTimeout(timeout));
+            tutorialTimeouts = [];
+        }
+
+        function hideCursorTutorial() {
+            const cursor = document.getElementById('cursorTutorial');
+            const tutorialText = document.getElementById('tutorialText');
+            
+            // Clear any running timeouts
+            clearTutorialTimeouts();
+            
+            // Immediately fade out the tutorial
+            cursor.style.transition = 'all 0.3s ease';
+            cursor.style.opacity = '0';
+            tutorialText.style.opacity = '0';
+            
+            // Reset cursor position after fade out
+            const resetTimeout = setTimeout(() => {
+                cursor.style.transition = 'none';
+                cursor.style.transform = 'scale(1)';
+                cursor.style.left = '-50px';
+                cursor.style.top = '0px';
+            }, 300);
+            
+            tutorialTimeouts.push(resetTimeout);
+        }
+
+        function showCursorTutorial() {
+            if (tutorialShown || currentPage !== 'vfx') return;
+            
+            tutorialShown = true;
+            const cursor = document.getElementById('cursorTutorial');
+            const tutorialText = document.getElementById('tutorialText');
+            
+            // Clear any existing timeouts first
+            clearTutorialTimeouts();
+            
+            // Find the Asminthia button
+            const asminthiaButton = document.querySelector('[data-target="asminthia"]');
+            if (!asminthiaButton) return;
+            
+            const buttonRect = asminthiaButton.getBoundingClientRect();
+            const containerRect = document.querySelector('.container').getBoundingClientRect();
+            
+            // Position cursor off-screen initially with scale 0
+            cursor.style.left = '-50px';
+            cursor.style.top = (buttonRect.top - containerRect.top + buttonRect.height/2 - 16) + 'px';
+            cursor.style.transform = 'scale(0)';
+            cursor.style.opacity = '1';
+            
+            // First animate scale up
+            const timeout1 = setTimeout(() => {
+                cursor.style.transition = 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                cursor.style.transform = 'scale(1)';
+            }, 200);
+            tutorialTimeouts.push(timeout1);
+            
+            // Then animate cursor to button position
+            const timeout2 = setTimeout(() => {
+                cursor.style.transition = 'all 1.5s cubic-bezier(0.4, 0, 0.2, 1)';
+                cursor.style.left = (buttonRect.left - containerRect.left + buttonRect.width/2 - 16) + 'px';
+                cursor.style.top = (buttonRect.top - containerRect.top + buttonRect.height/2 - 16) + 'px';
+            }, 700);
+            tutorialTimeouts.push(timeout2);
+            
+            // Show tutorial text
+            const timeout3 = setTimeout(() => {
+                tutorialText.style.opacity = '1';
+                tutorialText.style.transform = 'translateX(0)';
+            }, 1700);
+            tutorialTimeouts.push(timeout3);
+            
+            // Simulate click animation with cute effect
+            const timeout4 = setTimeout(() => {
+                cursor.style.transform = 'scale(0.8)';
+                
+                // Create the cute click effect at cursor position with offset
+                const cursorRect = cursor.getBoundingClientRect();
+                const cursorCenterX = cursorRect.left + cursorRect.width / 2 - 7; // 7px left offset
+                const cursorCenterY = cursorRect.top + cursorRect.height / 2 - 10; // 10px up offset
+                createCursorClickEffect(cursorCenterX, cursorCenterY);
+                
+                const timeout5 = setTimeout(() => {
+                    cursor.style.transform = 'scale(1)';
+                }, 200);
+                tutorialTimeouts.push(timeout5);
+            }, 2700);
+            tutorialTimeouts.push(timeout4);
+            
+            // Fade out tutorial
+            const timeout6 = setTimeout(() => {
+                cursor.style.transition = 'all 0.8s ease';
+                cursor.style.opacity = '0';
+                tutorialText.style.opacity = '0';
+            }, 4700);
+            tutorialTimeouts.push(timeout6);
+            
+            // Reset cursor position
+            const timeout7 = setTimeout(() => {
+                cursor.style.transition = 'none';
+                cursor.style.transform = 'scale(1)';
+            }, 5500);
+            tutorialTimeouts.push(timeout7);
+        }
+
+        function showPage(pageId) {
+            // Check if this button is enabled
+            if (!BUTTON_SETTINGS[pageId] || !BUTTON_SETTINGS[pageId].enabled) {
+                return; // Do nothing if disabled
+            }
+
+            playClickSound(); // Add click sound
+            const welcomeScreen = document.getElementById('welcome');
+            const targetPage = document.getElementById(pageId);
+            
+            // Add ripple effect to the clicked button
+            const clickedButton = event.target.closest('.nav-button');
+            if (clickedButton) {
+                createRipple(event, clickedButton);
+            }
+            
+            // Fade out welcome screen
+            welcomeScreen.classList.add('fade-out');
+            
+            setTimeout(() => {
+                // Hide welcome screen
+                welcomeScreen.style.display = 'none';
+                welcomeScreen.classList.remove('fade-out');
+                
+                // Hide all portfolio pages
+                const pages = document.querySelectorAll('.portfolio-page');
+                pages.forEach(page => {
+                    page.classList.remove('active');
+                });
+                
+                // Show selected page with fade in
+                targetPage.classList.add('active');
+                currentPage = pageId;
+                
+                // Show cursor tutorial for VFX page
+                if (pageId === 'vfx') {
+                    setTimeout(() => {
+                        showCursorTutorial();
+                    }, 800);
+                }
+            }, 500);
+        }
+
+        function showWelcome() {
+            playClickSound(); // Add click sound
+            const currentPageElement = document.getElementById(currentPage);
+            const welcomeScreen = document.getElementById('welcome');
+            
+            // Add ripple effect to back button
+            if (event && event.target) {
+                createRipple(event, event.target);
+            }
+            
+            // Hide cursor tutorial immediately if it's showing
+            hideCursorTutorial();
+            
+            // Reset tutorial flag
+            tutorialShown = false;
+            
+            // Fade out current page
+            if (currentPageElement) {
+                currentPageElement.classList.add('fade-out');
+            }
+            
+            setTimeout(() => {
+                // Hide all pages
+                const pages = document.querySelectorAll('.portfolio-page');
+                pages.forEach(page => {
+                    page.classList.remove('active', 'fade-out');
+                });
+                
+                // Hide any open commission info
+                const commissionInfos = document.querySelectorAll('.commission-info');
+                commissionInfos.forEach(info => {
+                    info.classList.remove('active');
+                });
+                
+                // Show welcome screen
+                welcomeScreen.style.display = 'flex';
+                currentPage = 'welcome';
+            }, 500);
+        }
+
+        function toggleCommissionInfo(pageType) {
+            playClickSound(); // Add click sound
+            const commissionInfo = document.getElementById(pageType + '-commission-info');
+            const isActive = commissionInfo.classList.contains('active');
+            
+            // Close all commission info sections first
+            const allCommissionInfos = document.querySelectorAll('.commission-info');
+            allCommissionInfos.forEach(info => {
+                info.classList.remove('active');
+            });
+            
+            // If it wasn't active, open this one
+            if (!isActive) {
+                setTimeout(() => {
+                    commissionInfo.classList.add('active');
+                    // Wait for the commission info to fully expand (0.6s transition) then scroll
+                    setTimeout(() => {
+                        window.scrollTo({
+                            top: document.body.scrollHeight,
+                            behavior: 'smooth'
+                        });
+                    }, 650); // Slightly longer than the 0.6s transition
+                }, 100);
+            }
+        }
+
+        function updateSocialCredit(text) {
+            const creditElement = document.getElementById('socialCredit');
+            creditElement.style.opacity = '0';
+            setTimeout(() => {
+                creditElement.textContent = text;
+                creditElement.style.opacity = '0.8';
+            }, 150);
+        }
+
+        function openModal(videoSrc, description, credits) {
+            playClickSound(); // Add click sound
+            const modal = document.getElementById('imageModal');
+            const modalVideoContainer = document.getElementById('modalVideoContainer');
+            const modalDescription = document.getElementById('modalDescription');
+            const modalCredits = document.getElementById('modalCredits');
+            
+            // Create video element
+            modalVideoContainer.innerHTML = `
+                <video controls autoplay muted loop>
+                    <source src="${videoSrc}" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            `;
+            
+            modalDescription.textContent = description;
+            modalCredits.textContent = credits;
+            modal.style.display = 'block';
+        }
+
+        function closeModal() {
+            playClickSound(); // Add click sound
+            const modal = document.getElementById('imageModal');
+            const modalVideoContainer = document.getElementById('modalVideoContainer');
+            
+            // Stop video playback
+            const video = modalVideoContainer.querySelector('video');
+            if (video) {
+                video.pause();
+                video.currentTime = 0;
+            }
+            
+            modal.style.display = 'none';
+        }
+
+        // Close modal when clicking outside of it
+        window.onclick = function(event) {
+            const modal = document.getElementById('imageModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // Initialize button states based on configuration
+        function initializeButtons() {
+            Object.keys(BUTTON_SETTINGS).forEach(buttonId => {
+                const button = document.querySelector(`[data-page="${buttonId}"]`);
+                if (button) {
+                    if (!BUTTON_SETTINGS[buttonId].enabled) {
+                        button.classList.add('disabled');
+                        button.removeAttribute('onclick');
+                    } else {
+                        button.classList.remove('disabled');
+                        button.setAttribute('onclick', `showPage('${buttonId}')`);
+                    }
+                }
+            });
+        }
+
+        // Add event listeners for nav buttons
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize button states
+            initializeButtons();
+
+            // Initialize audio on any user interaction
+            document.body.addEventListener('click', initializeAudio, { once: true });
+            document.body.addEventListener('keydown', initializeAudio, { once: true });
+            document.body.addEventListener('mouseenter', initializeAudio, { once: true });
+
+            const navButtons = document.querySelectorAll('.nav-button:not(.disabled)');
+            
+            navButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    createRipple(e, this);
+                });
+                // Add hover sound to enabled nav buttons only
+                button.addEventListener('mouseenter', () => {
+                    playHoverSound();
+                });
+            });
+
+            // Add hover sounds to all back buttons
+            document.querySelectorAll('.back-button').forEach(button => {
+                button.addEventListener('mouseenter', () => {
+                    playHoverSound();
+                });
+            });
+
+            // Add hover sounds to all commission buttons
+            document.querySelectorAll('.commission-button').forEach(button => {
+                button.addEventListener('mouseenter', () => {
+                    playHoverSound();
+                });
+            });
+
+            // Add hover sounds to gallery items
+            document.querySelectorAll('.section-gallery-item, .gallery-item').forEach(item => {
+                item.addEventListener('mouseenter', () => {
+                    playHoverSound();
+                });
+            });
+
+            // Add hover sound to audio toggle
+            document.getElementById('audioToggle').addEventListener('mouseenter', () => {
+                playHoverSound();
+            });
+
+            // Social media button functionality
+            document.querySelector('.discord').addEventListener('click', () => {
+                playClickSound(); // Add click sound
+                window.open('https://discord.com/channels/@me', '_blank');
+            });
+            document.querySelector('.discord').addEventListener('mouseenter', () => {
+                playHoverSound(); // Add hover sound
+            });
+
+            document.querySelector('.youtube').addEventListener('click', () => {
+                playClickSound(); // Add click sound
+                window.open('https://www.youtube.com/@johnmasterxx', '_blank');
+            });
+            document.querySelector('.youtube').addEventListener('mouseenter', () => {
+                playHoverSound(); // Add hover sound
+            });
+
+            document.querySelector('.roblox').addEventListener('click', () => {
+                playClickSound(); // Add click sound
+                window.open('https://www.roblox.com/users/137719231/profile', '_blank');
+            });
+            document.querySelector('.roblox').addEventListener('mouseenter', () => {
+                playHoverSound(); // Add hover sound
+            });
+        });
+    </script>
+</body>
+</html>

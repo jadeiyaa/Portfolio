@@ -1,2 +1,0 @@
-# Jadeworks
-John's Portfolio
